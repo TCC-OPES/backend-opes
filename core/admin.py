@@ -16,7 +16,8 @@ class UserAdmin(BaseUserAdmin):
     list_display = ['email', 'name']
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
-        (_('Personal Info'), {'fields': ('name',)}),
+        # AJUSTADO AQUI: Adicionado o campo 'foto' logo após o 'name'
+        (_('Personal Info'), {'fields': ('name', 'foto')}),
         (
             _('Permissions'),
             {
@@ -42,6 +43,7 @@ class UserAdmin(BaseUserAdmin):
                     'password1',
                     'password2',
                     'name',
+                    'foto',  # Adicionado também na tela de criação de usuário se precisar
                     'is_active',
                     'is_staff',
                     'is_superuser',
@@ -58,4 +60,4 @@ admin.site.register(models.Cartao)
 admin.site.register(models.MetaFinanceira)
 admin.site.register(models.Familia)
 admin.site.register(models.MembroFamilia)
-admin.site.register(models.DespesaCompartilhada)
+admin.site.register(models.DespesaCompartilhada)    

@@ -51,6 +51,14 @@ class User(AbstractBaseUser, PermissionsMixin):
         help_text=_('Indica que este usuário pode acessar o Admin.'),
     )
 
+    foto = models.ImageField(
+        upload_to='perfil_fotos/', 
+        null=True, 
+        blank=True, 
+        verbose_name=_('Foto de Perfil'),
+        help_text=_('Foto de perfil do usuário no sistema')
+    )
+
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
