@@ -52,3 +52,10 @@ class UserAdmin(BaseUserAdmin):
 
 
 admin.site.register(models.User, UserAdmin)
+admin.site.register(models.Usuario)
+admin.site.register(models.Transacao)
+admin.site.register(models.Cartao)
+admin.site.register(models.MetaFinanceira)
+admin.site.register(models.Familia)
+admin.site.register(models.MembroFamilia)
+admin.site.register(models.DespesaCompartilhada)

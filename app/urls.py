@@ -24,6 +24,11 @@ urlpatterns = [
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
 
-    # cadastro
+    # auth 
     path('api/', include('core.urls.usuario')),
+    path('api/transacoes/', include('core.urls.transacao')),
+    path('api/cartoes/', include('core.urls.cartao')),
+    path('api/metas/', include('core.urls.meta')),
+    path('api/familia/', include('core.urls.familia')),
+    path('api/dashboard/', include('core.urls.dashboard')),
 ]
