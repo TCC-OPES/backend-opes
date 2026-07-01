@@ -1,15 +1,13 @@
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-
-from core.serializers import UsuarioSerializer
-
+from core.serializers.user import UserSerializer
 
 class MeView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        usuario = request.user.perfil
+        user = request.user
         return Response({
-            "data": UsuarioSerializer(usuario).data
+            "data": UserSerializer(user).data
         })

@@ -158,6 +158,13 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),  # Tokens de atualização expiram em 1 dia
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'dredwverw',
+    'API_KEY': '271426946256921',
+    'API_SECRET': '2bo_SI44Ru9Aw6YpV0xbV32DYEc',
+}
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # Exibe as configurações principais para verificação
 print(f'{MODE = } \n{MEDIA_URL = } \n{DATABASES = }')

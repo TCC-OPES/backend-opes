@@ -1,54 +1,24 @@
-"""
-Django admin customization.
-"""
-
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from django.utils.translation import gettext_lazy as _
-
-from core import models
-
+from core.models import User, Cartao, Familia, MembroFamilia, DespesaCompartilhada, MetaFinanceira, Transacao
 
 class UserAdmin(BaseUserAdmin):
-    """Define the admin pages for users."""
-
-    ordering = ['id']
-    list_display = ['email', 'name']
     fieldsets = (
-        (None, {'fields': ('email', 'password')}),
-        (_('Personal Info'), {'fields': ('name',)}),
-        (
-            _('Permissions'),
-            {
-                'fields': (
-                    'is_active',
-                    'is_staff',
-                    'is_superuser',
-                )
-            },
-        ),
-        (_('Important dates'), {'fields': ('last_login',)}),
-        (_('Groups'), {'fields': ('groups',)}),
-        (_('User Permissions'), {'fields': ('user_permissions',)}),
+        (None, {'fields': ('cpf', 'password')}),
+        ('Informações Pessoais', {'fields': ('name', 'email', 'telefone', 'foto')}),
+        ('Permissões', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
+        ('Datas Importantes', {'fields': ('criado_em', 'last_login')}),
     )
-    readonly_fields = ['last_login']
-    add_fieldsets = (
-        (
-            None,
-            {
-                'classes': ('wide',),
-                'fields': (
-                    'email',
-                    'password1',
-                    'password2',
-                    'name',
-                    'is_active',
-                    'is_staff',
-                    'is_superuser',
-                ),
-            },
-        ),
-    )
+    list_display = ('cpf', 'name', 'email', 'is_staff', 'criado_em')
+    search_fields = ('cpf', 'name', 'email')
+    ordering = ('cpf',)
+    readonly_fields = ('criado_em', 'last_login')
 
 
-admin.site.register(models.User, UserAdmin)
+admin.site.register(User, UserAdmin)
+admin.site.register(Cartao)
+admin.site.register(Familia)
+admin.site.register(MembroFamilia)
+admin.site.register(DespesaCompartilhada)
+admin.site.register(MetaFinanceira)
+admin.site.register(Transacao)
