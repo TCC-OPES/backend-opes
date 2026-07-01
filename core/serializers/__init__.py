@@ -1,10 +1,7 @@
-from .usuario import UsuarioSerializer
+from .auth import LoginSerializer
 from .cadastro import CadastroSerializer
-from .transacao import TransacaoSerializer
 from .cartao import CartaoSerializer
+from .familia import FamiliaSerializer, MembroFamiliaSerializer, DespesaCompartilhadaSerializer
 from .meta import MetaFinanceiraSerializer
-from .familia import (
-    FamiliaSerializer,
-    MembroFamiliaSerializer,
-    DespesaCompartilhadaSerializer
-)
+from .transacao import TransacaoSerializer
+from .user import UserSerializer

@@ -1,5 +1,4 @@
 from .user import User
-from .usuario import Usuario
 from .transacao import Transacao
 from .cartao import Cartao
 from .meta import MetaFinanceira

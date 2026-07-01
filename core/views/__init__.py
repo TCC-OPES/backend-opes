@@ -1,4 +1,4 @@
-from .usuario import CadastroView
+from .user import CadastroView, AtualizarFotoPerfilView
 from .auth import LoginView
 from .me import MeView
 from .transacao import TransacaoView
