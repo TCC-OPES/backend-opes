@@ -8,7 +8,7 @@ class CadastroSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['name', 'email', 'cpf', 'password', 'password_confirm']
+        fields = ['name', 'email', 'cpf', 'password', 'password_confirm', 'telefone']
 
     def validate_cpf(self, value):
         cpf_limpo = ''.join(filter(str.isdigit, value))
