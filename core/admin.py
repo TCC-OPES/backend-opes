@@ -1,8 +1,8 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from core.models import User, Cartao, Familia, MembroFamilia, DespesaCompartilhada, MetaFinanceira, Transacao
+from django.contrib.auth.hashers import make_password
 
-class UserAdmin(BaseUserAdmin):
+class UserAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {'fields': ('cpf', 'password')}),
         ('Informações Pessoais', {'fields': ('name', 'email', 'telefone', 'foto')}),
@@ -13,6 +13,11 @@ class UserAdmin(BaseUserAdmin):
     search_fields = ('cpf', 'name', 'email')
     ordering = ('cpf',)
     readonly_fields = ('criado_em', 'last_login')
+
+    def save_model(self, request, obj, form, change):
+        if not change or 'password' in form.changed_data:
+            obj.password = make_password(obj.password)
+        super().save_model(request, obj, form, change)
 
 
 admin.site.register(User, UserAdmin)
