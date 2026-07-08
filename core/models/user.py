@@ -1,4 +1,4 @@
-from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -22,22 +22,18 @@ class UserManager(BaseUserManager):
         extra_fields.setdefault('is_superuser', True)
         extra_fields.setdefault('is_active', True)
 
-        if extra_fields.get('is_staff') is not False:
-            pass
-        if extra_fields.get('is_superuser') is not False:
-            pass
-
         return self.create_user(cpf, email, password, **extra_fields)
 
 
-class User(AbstractUser):
-    username = None 
-    
+class User(AbstractBaseUser, PermissionsMixin):
     cpf = models.CharField(max_length=11, unique=True, verbose_name=_('CPF'), help_text=_('Apenas números'))
     email = models.EmailField(max_length=255, unique=True, verbose_name=_('email'))
     name = models.CharField(max_length=255, blank=True, null=True, verbose_name=_('name'))
     telefone = models.CharField(max_length=20, blank=True, null=True, verbose_name=_('Telefone'))
     foto = models.ImageField(upload_to='perfil_fotos/', null=True, blank=True, verbose_name=_('Foto de Perfil'))
+    
+    is_staff = models.BooleanField(default=False, verbose_name=_('staff status'))
+    is_active = models.BooleanField(default=True, verbose_name=_('active'))
     criado_em = models.DateTimeField(auto_now_add=True)
 
     objects = UserManager()
