@@ -33,5 +33,6 @@
   "peacock.color": "#007fff",
   "[python]": {
     "editor.defaultFormatter": "charliermarsh.ruff"
-  }
+  },
+  "python-envs.defaultEnvManager": "ms-python.python:system"
 }

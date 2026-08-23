@@ -5,6 +5,7 @@ from rest_framework import status
 from core.models import Investimento
 from core.serializers import InvestimentoSerializer
 
+
 class InvestimentoView(APIView):
     permission_classes = [IsAuthenticated]
 

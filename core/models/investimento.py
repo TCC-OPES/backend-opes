@@ -19,6 +19,7 @@ class Investimento(models.Model):
     tipo = models.CharField(max_length=20, choices=TIPOS, default='renda_fixa')
     valor_investido = models.DecimalField(max_digits=12, decimal_places=2)
     rentabilidade = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
+    cor = models.CharField(max_length=7, default='#2563EB')  # <-- ADICIONE ESTA LINHA
     data_aplicacao = models.DateField(auto_now_add=True)
 
     def __str__(self):
