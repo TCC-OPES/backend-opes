@@ -37,6 +37,7 @@ class User(AbstractUser):
     email = models.EmailField(max_length=255, unique=True, verbose_name=_('email'))
     name = models.CharField(max_length=255, blank=True, null=True, verbose_name=_('name'))
     telefone = models.CharField(max_length=20, blank=True, null=True, verbose_name=_('Telefone'))
+    nascimento = models.DateField(null=True, blank=True, verbose_name=_('Data de Nascimento'))
     foto = models.ImageField(upload_to='perfil_fotos/', null=True, blank=True, verbose_name=_('Foto de Perfil'))
     criado_em = models.DateTimeField(auto_now_add=True)
 

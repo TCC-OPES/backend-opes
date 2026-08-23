@@ -6,3 +6,4 @@ from .cartao import CartaoView
 from .familia import FamiliaView
 from .meta import MetaFinanceiraView
 from .dashboard import DashboardView
+from .investimento import InvestimentoView

@@ -9,7 +9,8 @@ from core.views import (
     CartaoView,
     FamiliaView,
     MetaFinanceiraView,
-    DashboardView
+    DashboardView,
+    InvestimentoView  # 1. Adicionado aqui
 )
 
 urlpatterns = [
@@ -26,4 +27,8 @@ urlpatterns = [
     path('api/metas/', MetaFinanceiraView.as_view(), name='metas'),
     path('api/metas/<int:pk>/', MetaFinanceiraView.as_view(), name='meta_detail'),
     path('api/transacoes/', TransacaoView.as_view(), name='transacoes'),
+    
+    # 2. Rotas de Investimentos (Listar/Criar e Atualizar/Deletar por ID)
+    path('api/investimentos/', InvestimentoView.as_view(), name='investimentos'),
+    path('api/investimentos/<int:pk>/', InvestimentoView.as_view(), name='investimento_detail'),
 ]
