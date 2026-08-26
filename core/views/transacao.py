@@ -8,10 +8,16 @@ from core.serializers import TransacaoSerializer
 
 class TransacaoView(APIView):
     permission_classes = [IsAuthenticated]
+    
     def get(self, request):
-        transacoes = Transacao.objects.filter(
-            usuario=request.user
-        )
+        tipo = request.query_params.get('tipo')
+        
+        
+        transacoes = Transacao.objects.filter(usuario=request.user)
+        
+        if tipo and tipo != 'todas':
+            transacoes = transacoes.filter(tipo=tipo)
+            
         serializer = TransacaoSerializer(
             transacoes,
             many=True
@@ -19,7 +25,6 @@ class TransacaoView(APIView):
         return Response(serializer.data)
 
     def post(self, request):
-
         serializer = TransacaoSerializer(
             data=request.data
         )
