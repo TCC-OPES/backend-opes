@@ -6,3 +6,4 @@ from .meta import MetaFinanceiraSerializer
 from .transacao import TransacaoSerializer
 from .user import UserSerializer
 from .investimento import InvestimentoSerializer
+from .openfinance import ConexaoBancariaSerializer, TransacaoImportadaSerializer

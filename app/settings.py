@@ -23,7 +23,8 @@ CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8000',
 ]
 CORS_ALLOW_ALL_ORIGINS = True
-
+PLUGGY_CLIENT_ID = os.getenv('PLUGGY_CLIENT_ID')
+PLUGGY_CLIENT_SECRET = os.getenv('PLUGGY_CLIENT_SECRET')
 # Aplicações instaladas
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -41,7 +42,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'core',
-    'openfinance',
 ]
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

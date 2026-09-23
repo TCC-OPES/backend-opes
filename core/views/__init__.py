@@ -7,3 +7,4 @@ from .familia import FamiliaView
 from .meta import MetaFinanceiraView
 from .dashboard import DashboardView
 from .investimento import InvestimentoView
+from .openfinance import ConexaoView, ConnectTokenView, SincronizarView, TransacaoImportadaView

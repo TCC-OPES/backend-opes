@@ -1,16 +1,20 @@
 from django.contrib import admin
-from django.urls import include, path
+from django.urls import path
 
 from core.views import (
     AtualizarFotoPerfilView,
     CadastroView,
     CartaoView,
+    ConexaoView,
+    ConnectTokenView,
     DashboardView,
     FamiliaView,
-    InvestimentoView,  # 1. Adicionado aqui
+    InvestimentoView,
     LoginView,
     MetaFinanceiraView,
     MeView,
+    SincronizarView,
+    TransacaoImportadaView,
     TransacaoView,
 )
 
@@ -28,6 +32,8 @@ urlpatterns = [
     path('api/transacoes/', TransacaoView.as_view(), name='transacoes'),
     path('api/investimentos/', InvestimentoView.as_view(), name='investimentos'),
     path('api/investimentos/<int:pk>/', InvestimentoView.as_view(), name='investimento_detail'),
-    path('api/openfinance/', include('openfinance.urls')),  
-    path('api/cadastro/', CadastroView.as_view(), name='cadastro'),
+    path('api/openfinance/connect-token/', ConnectTokenView.as_view(), name='openfinance_connect_token'),
+    path('api/openfinance/conexoes/', ConexaoView.as_view(), name='openfinance_conexoes'),
+    path('api/openfinance/conexoes/<int:conexao_id>/sincronizar/', SincronizarView.as_view(), name='openfinance_sincronizar'),
+    path('api/openfinance/transacoes/', TransacaoImportadaView.as_view(), name='openfinance_transacoes'),
 ]
