@@ -1,29 +1,33 @@
 from django.contrib import admin
 from django.urls import include, path
 
-from drf_spectacular.views import (
-    SpectacularAPIView,
-    SpectacularRedocView,
-    SpectacularSwaggerView,
-)
-
-from rest_framework_simplejwt.views import (
-    TokenRefreshView,
-    TokenVerifyView,
+from core.views import (
+    AtualizarFotoPerfilView,
+    CadastroView,
+    CartaoView,
+    DashboardView,
+    FamiliaView,
+    InvestimentoView,  # 1. Adicionado aqui
+    LoginView,
+    MetaFinanceiraView,
+    MeView,
+    TransacaoView,
 )
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-
-    # docs
-    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
-    path('api/doc/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
-    path('api/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
-
-    # jwt
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
-
-    # cadastro
-    path('api/', include('core.urls.usuario')),
+    path('api/cadastro/', CadastroView.as_view(), name='cadastro'),
+    path('api/login/', LoginView.as_view(), name='login'),
+    path('api/me/', MeView.as_view(), name='me'),
+    path('api/user/foto/', AtualizarFotoPerfilView.as_view(), name='atualizar_foto'),
+    path('api/cartoes/', CartaoView.as_view(), name='cartoes'),
+    path('api/dashboard/', DashboardView.as_view(), name='dashboard'),
+    path('api/familias/', FamiliaView.as_view(), name='familias'),
+    path('api/metas/', MetaFinanceiraView.as_view(), name='metas'),
+    path('api/metas/<int:pk>/', MetaFinanceiraView.as_view(), name='meta_detail'),
+    path('api/transacoes/', TransacaoView.as_view(), name='transacoes'),
+    path('api/investimentos/', InvestimentoView.as_view(), name='investimentos'),
+    path('api/investimentos/<int:pk>/', InvestimentoView.as_view(), name='investimento_detail'),
+    path('api/openfinance/', include('openfinance.urls')),  
+    path('api/cadastro/', CadastroView.as_view(), name='cadastro'),
 ]

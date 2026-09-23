@@ -41,8 +41,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'core',
+    'openfinance',
 ]
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -154,10 +154,17 @@ REST_FRAMEWORK = {
 
 # Configurações do Simple JWT
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=180),  # Tokens de acesso expiram em 3 horas
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),  # Tokens de atualização expiram em 1 dia
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),  # Tokens de acesso expiram em 1 dia
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),  # Tokens de atualização expiram em 7 dias
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'dredwverw',
+    'API_KEY': '271426946256921',
+    'API_SECRET': '2bo_SI44Ru9Aw6YpV0xbV32DYEc',
+}
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # Exibe as configurações principais para verificação
 print(f'{MODE = } \n{MEDIA_URL = } \n{DATABASES = }')
