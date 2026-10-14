@@ -61,4 +61,22 @@ def buscar_contas(api_key, item_id):
 
 
 def buscar_transacoes(api_key, account_id):
-    return _buscar_paginas(api_key, "transactions", {"accountId": account_id})
+    endpoint = f"{PLUGGY_BASE_URL}/v2/transactions"
+    headers = {"X-API-KEY": api_key}
+    resultados = []
+    url = endpoint
+    params = {"accountId": account_id}
+    consultas = set()
+    while True:
+        response = requests.get(url, params=params, headers=headers, timeout=20)
+        response.raise_for_status()
+        dados = response.json()
+        resultados.extend(dados["results"])
+        proxima = dados["next"]
+        if proxima is None:
+            return resultados
+        if not isinstance(proxima, str) or not proxima.startswith("?") or proxima in consultas:
+            raise ValueError("Paginação inválida retornada pela Pluggy.")
+        consultas.add(proxima)
+        url = endpoint + proxima
+        params = None
