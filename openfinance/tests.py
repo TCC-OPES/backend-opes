@@ -64,11 +64,14 @@ class OpenFinanceTests(TestCase):
     def test_fetches_all_transaction_pages(self, get):
         get.return_value.raise_for_status.return_value = None
         get.return_value.json.side_effect = [
-            {"results": [{"id": "first"}], "totalPages": 2},
-            {"results": [{"id": "second"}], "totalPages": 2},
+            {"results": [{"id": "first"}], "next": "?accountId=account&after=opaque%2Bcursor"},
+            {"results": [{"id": "second"}], "next": None},
         ]
         self.assertEqual([t["id"] for t in buscar_transacoes("key", "account")], ["first", "second"])
-        self.assertEqual(get.call_args_list[1].kwargs["params"]["page"], 2)
+        self.assertTrue(get.call_args_list[0].args[0].endswith("/v2/transactions"))
+        self.assertEqual(get.call_args_list[0].kwargs["params"], {"accountId": "account"})
+        self.assertTrue(get.call_args_list[1].args[0].endswith("/v2/transactions?accountId=account&after=opaque%2Bcursor"))
+        self.assertIsNone(get.call_args_list[1].kwargs["params"])
 
     @patch("openfinance.views.obter_api_key", return_value="api-key")
     @patch("openfinance.views.buscar_item")
@@ -86,3 +89,10 @@ class OpenFinanceTests(TestCase):
         self.assertIn("contas", response.data["detail"])
         self.assertNotIn("private-bank-data", str(response.data))
         self.assertNotIn("secret request details", str(response.data))
+
+    @patch("openfinance.pluggy.requests.get")
+    def test_transaction_cursor_repetition_is_rejected(self, get):
+        get.return_value.json.return_value = {"results": [], "next": "?accountId=account&after=same"}
+        with self.assertRaises(ValueError):
+            buscar_transacoes("key", "account")
+        self.assertEqual(get.call_count, 2)
