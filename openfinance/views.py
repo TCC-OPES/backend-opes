@@ -97,11 +97,23 @@ class SincronizarTransacoesView(APIView):
                 status=status.HTTP_409_CONFLICT,
             )
 
+        etapa = "contas"
         try:
             contas = buscar_contas(api_key, item_id)
+            etapa = "transações"
             registros = [t for conta in contas for t in buscar_transacoes(api_key, conta["id"])]
-        except (requests.RequestException, ValueError, KeyError):
-            return Response({"detail": "Falha ao consultar as transações bancárias."}, status=status.HTTP_502_BAD_GATEWAY)
+        except requests.HTTPError as error:
+            codigo = error.response.status_code if error.response is not None else None
+            detalhe = f"A Pluggy recusou a consulta de {etapa}"
+            if codigo is not None:
+                detalhe += f" (HTTP {codigo})"
+            return Response({"detail": detalhe + ".", "pluggy_status": codigo}, status=status.HTTP_502_BAD_GATEWAY)
+        except requests.Timeout:
+            return Response({"detail": f"A Pluggy demorou demais para responder à consulta de {etapa}. Tente novamente."}, status=status.HTTP_502_BAD_GATEWAY)
+        except requests.RequestException:
+            return Response({"detail": f"Não foi possível comunicar com a Pluggy para consultar {etapa}."}, status=status.HTTP_502_BAD_GATEWAY)
+        except (ValueError, KeyError):
+            return Response({"detail": f"A Pluggy retornou dados inesperados na consulta de {etapa}."}, status=status.HTTP_502_BAD_GATEWAY)
         novas_transacoes = 0
 
         try:
