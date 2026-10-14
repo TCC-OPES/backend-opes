@@ -1,5 +1,7 @@
 from unittest.mock import patch
 
+import requests
+
 from django.test import TestCase
 from rest_framework.test import APIClient
 
@@ -67,3 +69,20 @@ class OpenFinanceTests(TestCase):
         ]
         self.assertEqual([t["id"] for t in buscar_transacoes("key", "account")], ["first", "second"])
         self.assertEqual(get.call_args_list[1].kwargs["params"]["page"], 2)
+
+    @patch("openfinance.views.obter_api_key", return_value="api-key")
+    @patch("openfinance.views.buscar_item")
+    @patch("openfinance.views.buscar_contas")
+    def test_sync_reports_upstream_status_without_exposing_response(self, contas, item, _key):
+        ConexaoBancaria.objects.create(user=self.user, item_id="own-item")
+        item.return_value = {"clientUserId": str(self.user.pk), "status": "UPDATED"}
+        upstream = requests.Response()
+        upstream.status_code = 403
+        upstream._content = b"private-bank-data"
+        contas.side_effect = requests.HTTPError("secret request details", response=upstream)
+        response = self.client.post("/api/openfinance/sincronizar/", {"itemId": "own-item"}, format="json")
+        self.assertEqual(response.status_code, 502)
+        self.assertEqual(response.data["pluggy_status"], 403)
+        self.assertIn("contas", response.data["detail"])
+        self.assertNotIn("private-bank-data", str(response.data))
+        self.assertNotIn("secret request details", str(response.data))
