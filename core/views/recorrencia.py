@@ -64,12 +64,15 @@ class RecorrenciaView(APIView):
         serializer = RecorrenciaSerializer(obj, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
+        if not obj.ativa:
+            obj.ocorrencias.filter(confirmada_em__isnull=True, vencimento__gte=timezone.localdate()).delete()
         return Response(serializer.data)
 
     def delete(self, request, pk=None):
         obj = get_object_or_404(Recorrencia, pk=pk, usuario=request.user)
         obj.ativa = False
         obj.save(update_fields=['ativa'])
+        obj.ocorrencias.filter(confirmada_em__isnull=True, vencimento__gte=timezone.localdate()).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
