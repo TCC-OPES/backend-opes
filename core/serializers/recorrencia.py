@@ -22,8 +22,8 @@ class RecorrenciaSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({'data_fim': 'O término deve ser após o primeiro vencimento.'})
         if self.instance and any(key in attrs for key in (
             'frequencia', 'primeiro_vencimento', 'tipo', 'valor', 'titulo', 'categoria'
-        )) and self.instance.ocorrencias.filter(confirmada_em__isnull=False).exists():
-            raise serializers.ValidationError('Encerre esta recorrência e crie outra para preservar pagamentos passados.')
+        )) and self.instance.ocorrencias.exists():
+            raise serializers.ValidationError('Não é possível alterar dados financeiros após gerar vencimentos. Encerre esta recorrência e crie outra.')
         return attrs
 
 
