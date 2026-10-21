@@ -50,3 +50,35 @@ class RecorrenciaAPITests(APITestCase):
         self.client.force_authenticate(self.other)
         self.assertEqual(self.client.post(path).status_code, 404)
         self.assertEqual(self.client.get('/api/recorrencias/').data, [])
+
+    def test_pausar_preserva_pagamentos_e_cancela_previsoes_futuras(self):
+        from django.utils import timezone
+        inicio = timezone.localdate()
+        r = Recorrencia.objects.create(
+            usuario=self.user, titulo='Assinatura', categoria='Serviço',
+            tipo='despesa', valor=Decimal('25.00'),
+            frequencia='semanal', primeiro_vencimento=inicio,
+        )
+        fim = inicio + __import__('datetime').timedelta(days=14)
+        response = self.client.get('/api/recorrencias/ocorrencias/', {
+            'inicio': inicio.isoformat(), 'fim': fim.isoformat()
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data), 3)
+        primeiro = response.data[0]['id']
+        self.assertEqual(self.client.post(f'/api/recorrencias/ocorrencias/{primeiro}/confirmar/').status_code, 200)
+        self.assertEqual(self.client.patch(f'/api/recorrencias/{r.pk}/', {'ativa': False}).status_code, 200)
+        self.assertEqual(OcorrenciaRecorrente.objects.filter(recorrencia=r).count(), 1)
+        self.assertEqual(Transacao.objects.filter(usuario=self.user).count(), 1)
+
+    def test_isolamento_e_validacao_de_valores(self):
+        invalida = {
+            'titulo': 'Inválida', 'categoria': 'Geral', 'tipo': 'despesa',
+            'valor': '-5.00', 'frequencia': 'mensal', 'primeiro_vencimento': '2026-11-01',
+        }
+        self.assertEqual(self.client.post('/api/recorrencias/', invalida).status_code, 400)
+        invalida['valor'] = '19.90'
+        result = self.client.post('/api/recorrencias/', invalida)
+        self.assertEqual(result.status_code, 201)
+        self.client.force_authenticate(self.other)
+        self.assertEqual(self.client.get(f"/api/recorrencias/{result.data['id']}/").status_code, 404)
