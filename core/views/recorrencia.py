@@ -64,6 +64,8 @@ class RecorrenciaView(APIView):
         serializer = RecorrenciaSerializer(obj, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
+        if obj.data_fim is not None:
+            obj.ocorrencias.filter(confirmada_em__isnull=True, vencimento__gt=obj.data_fim).delete()
         if not obj.ativa:
             obj.ocorrencias.filter(confirmada_em__isnull=True, vencimento__gte=timezone.localdate()).delete()
         return Response(serializer.data)
