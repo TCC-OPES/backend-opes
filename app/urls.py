@@ -2,7 +2,7 @@ from core.views.recorrencia import RecorrenciaView, OcorrenciaView, ConfirmarOco
 from rest_framework_simplejwt.views import TokenRefreshView
 from django.http import JsonResponse
 from django.contrib import admin
-from django.urls import include, path
+from django.urls import path
 
 from drf_spectacular.views import (
     SpectacularAPIView,
@@ -123,12 +123,12 @@ urlpatterns = [
     ),
 
     # Open Finance
-    path(
-        'api/openfinance/',
-        include('openfinance.urls')
-    ),
-    path('api/transacoes/',
-        TransacaoView.as_view(), name='transacoes'),
+   ## path(
+  ##      'api/openfinance/',
+   ##     include('openfinance.urls')
+   ## ),
+   ## path('api/transacoes/',
+    ##    TransacaoView.as_view(), name='transacoes'),
 
     path(
     'api/transacoes/<int:pk>/',
