@@ -42,6 +42,19 @@ class TransacaoView(APIView):
             serializer.data,
             status=status.HTTP_201_CREATED
         )
+    def patch(self, request, pk=None):
+        if pk is None:
+            return Response({'erro': 'Informe o ID da transação.'}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            transacao = Transacao.objects.get(pk=pk, usuario=request.user)
+        except Transacao.DoesNotExist:
+            return Response({'erro': 'Transação não encontrada.'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = TransacaoSerializer(transacao, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
     # Excluir transação pelo ID
     def delete(self, request, pk=None):
         if pk is None:
