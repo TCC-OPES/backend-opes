@@ -58,12 +58,21 @@ class OcorrenciaSerializer(serializers.ModelSerializer):
     tipo = serializers.CharField(source='recorrencia.tipo', read_only=True)
     valor = serializers.DecimalField(source='recorrencia.valor', max_digits=12, decimal_places=2, read_only=True)
     status = serializers.SerializerMethodField()
+    numero_parcelas = serializers.IntegerField(source='recorrencia.numero_parcelas', read_only=True)
+    parcela_atual = serializers.SerializerMethodField()
 
     class Meta:
         model = OcorrenciaRecorrente
         fields = ['id', 'recorrencia', 'titulo', 'categoria', 'tipo', 'valor',
-                  'vencimento', 'confirmada_em', 'transacao', 'status']
+                  'vencimento', 'confirmada_em', 'transacao', 'status', 'numero_parcelas', 'parcela_atual']
         read_only_fields = fields
+
+    def get_parcela_atual(self, obj):
+        recorrencia = obj.recorrencia
+        if not recorrencia.numero_parcelas:
+            return None
+        base = recorrencia.primeiro_vencimento
+        return (obj.vencimento.year - base.year) * 12 + obj.vencimento.month - base.month + 1
 
     def get_status(self, obj):
         from django.utils import timezone
