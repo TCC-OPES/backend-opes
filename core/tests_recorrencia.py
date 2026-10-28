@@ -93,6 +93,9 @@ class RecorrenciaAPITests(APITestCase):
         self.assertEqual(created.status_code, 201)
         self.assertEqual(created.data['data_fim'], '2026-03-31')
         self.assertEqual(created.data['numero_parcelas'], 3)
+        recorrencia = Recorrencia.objects.get(pk=created.data['id'])
+        self.assertTrue(recorrencia.ativa)
+        self.assertEqual(list(vencimentos(recorrencia, date(2026, 1, 1), date(2026, 6, 30))), [date(2026, 1, 31), date(2026, 2, 28), date(2026, 3, 31)])
         response = self.client.get('/api/recorrencias/ocorrencias/', {
             'inicio': '2026-01-01', 'fim': '2026-06-30',
         })
