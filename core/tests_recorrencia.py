@@ -82,3 +82,49 @@ class RecorrenciaAPITests(APITestCase):
         self.assertEqual(result.status_code, 201)
         self.client.force_authenticate(self.other)
         self.assertEqual(self.client.get(f"/api/recorrencias/{result.data['id']}/").status_code, 404)
+
+    def test_parcelas_geram_ultimo_vencimento_e_nao_mais_datas(self):
+        payload = {
+            'titulo': 'Notebook', 'categoria': 'Equipamentos', 'tipo': 'despesa',
+            'valor': '250.00', 'frequencia': 'mensal',
+            'primeiro_vencimento': '2026-01-31', 'numero_parcelas': 3,
+        }
+        created = self.client.post('/api/recorrencias/', payload)
+        self.assertEqual(created.status_code, 201)
+        self.assertEqual(created.data['data_fim'], '2026-03-31')
+        self.assertEqual(created.data['numero_parcelas'], 3)
+        recorrencia = Recorrencia.objects.get(pk=created.data['id'])
+        self.assertTrue(recorrencia.ativa)
+        self.assertEqual(list(vencimentos(recorrencia, date(2026, 1, 1), date(2026, 6, 30))), [date(2026, 1, 31), date(2026, 2, 28), date(2026, 3, 31)])
+        response = self.client.get('/api/recorrencias/ocorrencias/', {
+            'inicio': '2026-01-01', 'fim': '2026-06-30',
+        })
+        self.assertEqual([x['vencimento'] for x in response.data], [
+            '2026-01-31', '2026-02-28', '2026-03-31',
+        ])
+
+    def test_nao_aceita_parcelamento_anual(self):
+        payload = {
+            'titulo': 'Seguro', 'categoria': 'Geral', 'tipo': 'despesa',
+            'valor': '80.00', 'frequencia': 'anual',
+            'primeiro_vencimento': '2026-11-02', 'numero_parcelas': 4,
+        }
+        self.assertEqual(self.client.post('/api/recorrencias/', payload).status_code, 400)
+
+    def test_editar_previsao_antes_de_lancamento_preserva_consistencia(self):
+        recorrencia = Recorrencia.objects.create(
+            usuario=self.user, titulo='Internet', categoria='Casa', tipo='despesa',
+            valor=Decimal('100.00'), frequencia='mensal', primeiro_vencimento=date(2026, 11, 10),
+        )
+        url = '/api/recorrencias/ocorrencias/?inicio=2026-11-01&fim=2026-11-30'
+        self.assertEqual(len(self.client.get(url).data), 1)
+        self.assertEqual(OcorrenciaRecorrente.objects.filter(recorrencia=recorrencia).count(), 1)
+        response = self.client.patch(f'/api/recorrencias/{recorrencia.pk}/', {
+            'titulo': 'Internet nova', 'valor': '150.00',
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(OcorrenciaRecorrente.objects.filter(recorrencia=recorrencia).count(), 0)
+        novas = self.client.get(url).data
+        self.assertEqual(len(novas), 1)
+        self.assertEqual(novas[0]['titulo'], 'Internet nova')
+        self.assertEqual(Decimal(str(novas[0]['valor'])), Decimal('150.00'))
