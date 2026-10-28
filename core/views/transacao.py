@@ -13,7 +13,7 @@ class TransacaoView(APIView):
         tipo = request.query_params.get('tipo')
         
         
-        transacoes = Transacao.objects.filter(usuario=request.user)
+        transacoes = Transacao.objects.filter(usuario=request.user).order_by("-data", "-pk")
         
         if tipo and tipo != 'todas':
             transacoes = transacoes.filter(tipo=tipo)

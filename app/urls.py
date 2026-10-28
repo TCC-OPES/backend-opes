@@ -1,3 +1,4 @@
+from core.views.recorrencia import RecorrenciaView, OcorrenciaView, ConfirmarOcorrenciaView
 from django.contrib import admin
 from django.urls import include, path
 
@@ -15,6 +16,10 @@ from core.views import (
 )
 
 urlpatterns = [
+    path('api/recorrencias/', RecorrenciaView.as_view(), name='recorrencias'),
+    path('api/recorrencias/<int:pk>/', RecorrenciaView.as_view(), name='recorrencia-detail'),
+    path('api/recorrencias/ocorrencias/', OcorrenciaView.as_view(), name='recorrencias-ocorrencias'),
+    path('api/recorrencias/ocorrencias/<int:pk>/confirmar/', ConfirmarOcorrenciaView.as_view(), name='recorrencia-confirmar'),
     path('admin/', admin.site.urls),
     path('api/cadastro/', CadastroView.as_view(), name='cadastro'),
     path('api/login/', LoginView.as_view(), name='login'),
@@ -28,6 +33,5 @@ urlpatterns = [
     path('api/transacoes/', TransacaoView.as_view(), name='transacoes'),
     path('api/investimentos/', InvestimentoView.as_view(), name='investimentos'),
     path('api/investimentos/<int:pk>/', InvestimentoView.as_view(), name='investimento_detail'),
-    path('api/openfinance/', include('openfinance.urls')),  
     path('api/cadastro/', CadastroView.as_view(), name='cadastro'),
 ]
