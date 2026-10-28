@@ -14,6 +14,7 @@ class Recorrencia(models.Model):
     frequencia = models.CharField(max_length=10, choices=FREQUENCIAS, default='mensal')
     primeiro_vencimento = models.DateField()
     data_fim = models.DateField(null=True, blank=True)
+    numero_parcelas = models.PositiveSmallIntegerField(null=True, blank=True)
     ativa = models.BooleanField(default=True)
     criada_em = models.DateTimeField(auto_now_add=True)
 
