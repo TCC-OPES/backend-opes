@@ -59,11 +59,16 @@ class RecorrenciaView(APIView):
         serializer.save(usuario=request.user)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+    @transaction.atomic
     def patch(self, request, pk=None):
         obj = get_object_or_404(Recorrencia, pk=pk, usuario=request.user)
         serializer = RecorrenciaSerializer(obj, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
+        campos = ('titulo', 'categoria', 'tipo', 'valor', 'frequencia', 'primeiro_vencimento', 'numero_parcelas')
+        modificada = any(campo in serializer.validated_data and serializer.validated_data[campo] != getattr(obj, campo) for campo in campos)
         serializer.save()
+        if modificada:
+            obj.ocorrencias.filter(confirmada_em__isnull=True).delete()
         if obj.data_fim is not None:
             obj.ocorrencias.filter(confirmada_em__isnull=True, vencimento__gt=obj.data_fim).delete()
         if not obj.ativa:

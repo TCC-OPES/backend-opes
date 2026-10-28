@@ -110,3 +110,21 @@ class RecorrenciaAPITests(APITestCase):
             'primeiro_vencimento': '2026-11-02', 'numero_parcelas': 4,
         }
         self.assertEqual(self.client.post('/api/recorrencias/', payload).status_code, 400)
+
+    def test_editar_previsao_antes_de_lancamento_preserva_consistencia(self):
+        recorrencia = Recorrencia.objects.create(
+            usuario=self.user, titulo='Internet', categoria='Casa', tipo='despesa',
+            valor=Decimal('100.00'), frequencia='mensal', primeiro_vencimento=date(2026, 11, 10),
+        )
+        url = '/api/recorrencias/ocorrencias/?inicio=2026-11-01&fim=2026-11-30'
+        self.assertEqual(len(self.client.get(url).data), 1)
+        self.assertEqual(OcorrenciaRecorrente.objects.filter(recorrencia=recorrencia).count(), 1)
+        response = self.client.patch(f'/api/recorrencias/{recorrencia.pk}/', {
+            'titulo': 'Internet nova', 'valor': '150.00',
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(OcorrenciaRecorrente.objects.filter(recorrencia=recorrencia).count(), 0)
+        novas = self.client.get(url).data
+        self.assertEqual(len(novas), 1)
+        self.assertEqual(novas[0]['titulo'], 'Internet nova')
+        self.assertEqual(Decimal(str(novas[0]['valor'])), Decimal('150.00'))
