@@ -13,11 +13,10 @@ class TransacaoView(APIView):
     # Listar transações
     def get(self, request, pk=None):
         tipo = request.query_params.get('tipo')
-
         transacoes = Transacao.objects.filter(
             usuario=request.user
-        )
-
+        )        
+        transacoes = Transacao.objects.filter(usuario=request.user).order_by("-data", "-pk")
         if tipo and tipo != 'todas':
             transacoes = transacoes.filter(tipo=tipo)
 
@@ -43,7 +42,6 @@ class TransacaoView(APIView):
             serializer.data,
             status=status.HTTP_201_CREATED
         )
-
     # Excluir transação pelo ID
     def delete(self, request, pk=None):
         if pk is None:
