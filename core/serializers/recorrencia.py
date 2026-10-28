@@ -11,6 +11,10 @@ class RecorrenciaSerializer(serializers.ModelSerializer):
                   'primeiro_vencimento', 'data_fim', 'numero_parcelas', 'ativa', 'criada_em']
         read_only_fields = ['id', 'criada_em']
 
+    def create(self, validated_data):
+        validated_data['ativa'] = True
+        return super().create(validated_data)
+
     def validate_valor(self, value):
         if value <= 0:
             raise serializers.ValidationError('O valor deve ser maior que zero.')
