@@ -82,3 +82,28 @@ class RecorrenciaAPITests(APITestCase):
         self.assertEqual(result.status_code, 201)
         self.client.force_authenticate(self.other)
         self.assertEqual(self.client.get(f"/api/recorrencias/{result.data['id']}/").status_code, 404)
+
+    def test_parcelas_geram_ultimo_vencimento_e_nao_mais_datas(self):
+        payload = {
+            'titulo': 'Notebook', 'categoria': 'Equipamentos', 'tipo': 'despesa',
+            'valor': '250.00', 'frequencia': 'mensal',
+            'primeiro_vencimento': '2026-01-31', 'numero_parcelas': 3,
+        }
+        created = self.client.post('/api/recorrencias/', payload)
+        self.assertEqual(created.status_code, 201)
+        self.assertEqual(created.data['data_fim'], '2026-03-31')
+        self.assertEqual(created.data['numero_parcelas'], 3)
+        response = self.client.get('/api/recorrencias/ocorrencias/', {
+            'inicio': '2026-01-01', 'fim': '2026-06-30',
+        })
+        self.assertEqual([x['vencimento'] for x in response.data], [
+            '2026-01-31', '2026-02-28', '2026-03-31',
+        ])
+
+    def test_nao_aceita_parcelamento_anual(self):
+        payload = {
+            'titulo': 'Seguro', 'categoria': 'Geral', 'tipo': 'despesa',
+            'valor': '80.00', 'frequencia': 'anual',
+            'primeiro_vencimento': '2026-11-02', 'numero_parcelas': 4,
+        }
+        self.assertEqual(self.client.post('/api/recorrencias/', payload).status_code, 400)
