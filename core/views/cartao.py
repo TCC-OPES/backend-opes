@@ -44,6 +44,19 @@ class CartaoView(APIView):
             status=status.HTTP_201_CREATED
         )
 
+    # Atualizar apenas cartões pertencentes ao usuário autenticado
+    def patch(self, request, pk=None):
+        if pk is None:
+            return Response({'erro': 'Informe o ID do cartão.'}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            cartao = Cartao.objects.get(pk=pk, usuario=request.user)
+        except Cartao.DoesNotExist:
+            return Response({'erro': 'Cartão não encontrado.'}, status=status.HTTP_404_NOT_FOUND)
+        serializer = CartaoSerializer(cartao, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
     # Excluir cartão pelo ID
     def delete(self, request, pk=None):
 
