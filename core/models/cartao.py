@@ -27,6 +27,8 @@ class Cartao(models.Model):
 
     vencimento = models.DateField()
 
+    cor = models.CharField(max_length=7, default='#14372D')
+
     criado_em = models.DateTimeField(
         auto_now_add=True
     )
