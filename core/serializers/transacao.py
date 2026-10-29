@@ -17,6 +17,9 @@ class TransacaoSerializer(serializers.ModelSerializer):
         if cartao is not None and cartao.usuario_id != usuario.pk:
             raise serializers.ValidationError({'cartao': 'Este cartão não pertence ao usuário.'})
 
+        if tipo != 'despesa' and metodo == 'credito':
+            raise serializers.ValidationError({'metodo_pagamento': 'Cartão de crédito somente para despesas.'})
+
         if tipo == 'despesa' and metodo == 'credito':
             if cartao is None:
                 raise serializers.ValidationError({'cartao': 'Selecione o cartão de crédito utilizado.'})
