@@ -81,3 +81,44 @@ class PagamentosCreditoTests(APITestCase):
         removida = self.client.delete(f'/api/cartoes/{self.cartao.id}/')
         self.assertEqual(removida.status_code, 409)
         self.assertTrue(Cartao.objects.filter(pk=self.cartao.id).exists())
+
+
+    def test_fechamento_mensal_persiste_e_valida_dia(self):
+        resposta = self.client.patch(
+            f'/api/cartoes/{self.cartao.id}/',
+            {'dia_fechamento': 8, 'cor': '#6C4A73'},
+            format='json',
+        )
+        self.assertEqual(resposta.status_code, 200, resposta.data)
+        self.cartao.refresh_from_db()
+        self.assertEqual(self.cartao.dia_fechamento, 8)
+        self.assertEqual(self.cartao.cor, '#6C4A73')
+        self.assertEqual(resposta.data['dia_fechamento'], 8)
+
+        invalida = self.client.patch(
+            f'/api/cartoes/{self.cartao.id}/',
+            {'dia_fechamento': 32},
+            format='json',
+        )
+        self.assertEqual(invalida.status_code, 400)
+        self.cartao.refresh_from_db()
+        self.assertEqual(self.cartao.dia_fechamento, 8)
+
+    def test_criar_cartao_com_fechamento(self):
+        resposta = self.client.post(
+            '/api/cartoes/',
+            {
+                'nome': 'Cartão novo',
+                'banco': 'Banco exemplo',
+                'limite_total': '1500.00',
+                'valor_utilizado': '0',
+                'vencimento': '15/11/2026',
+                'dia_fechamento': 5,
+                'cor': '#295B83',
+            },
+            format='json',
+        )
+        self.assertEqual(resposta.status_code, 201, resposta.data)
+        cartao = Cartao.objects.get(pk=resposta.data['id'])
+        self.assertEqual(cartao.dia_fechamento, 5)
+        self.assertEqual(cartao.cor, '#295B83')
