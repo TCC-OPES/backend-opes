@@ -1,4 +1,8 @@
 from core.views.recorrencia import RecorrenciaView, OcorrenciaView, ConfirmarOcorrenciaView
+from core.views.familia import (
+    FamiliaMembrosView, FamiliaMembroDetailView, MeusConvitesFamiliaView,
+    ResponderConviteFamiliaView, CancelarConviteFamiliaView, FamiliaConvitesView,
+)
 from rest_framework_simplejwt.views import TokenRefreshView
 from django.http import JsonResponse
 from django.contrib import admin
@@ -90,6 +94,20 @@ urlpatterns = [
         FamiliaView.as_view(),
         name='familias'
     ),
+
+    # Convites e integrantes de famílias
+    path('api/familias/<int:familia_id>/membros/', FamiliaMembrosView.as_view(),
+         name='familia-membros'),
+    path('api/familias/<int:familia_id>/membros/<int:membro_id>/',
+         FamiliaMembroDetailView.as_view(), name='familia-membro-detail'),
+    path('api/familias/<int:familia_id>/convites/', FamiliaConvitesView.as_view(),
+         name='familia-convites'),
+    path('api/familias/<int:familia_id>/convites/<int:convite_id>/',
+         CancelarConviteFamiliaView.as_view(), name='familia-convite-cancelar'),
+    path('api/familias/convites/', MeusConvitesFamiliaView.as_view(),
+         name='meus-convites-familia'),
+    path('api/familias/convites/<int:convite_id>/responder/',
+         ResponderConviteFamiliaView.as_view(), name='responder-convite-familia'),
 
     # Metas financeiras
     path(
