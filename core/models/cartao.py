@@ -29,6 +29,9 @@ class Cartao(models.Model):
 
     cor = models.CharField(max_length=7, default='#14372D')
 
+    # Dia do mês em que a fatura fecha (1 a 31; meses curtos usam o último dia).
+    dia_fechamento = models.PositiveSmallIntegerField(null=True, blank=True)
+
     criado_em = models.DateTimeField(
         auto_now_add=True
     )
