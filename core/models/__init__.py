@@ -7,3 +7,4 @@ from .membro_familia import MembroFamilia
 from .despesa_compartilhada import DespesaCompartilhada
 from .investimento import Investimento
 from .recorrencia import Recorrencia, OcorrenciaRecorrente
+from .convite_familia import ConviteFamilia
