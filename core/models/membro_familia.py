@@ -36,6 +36,11 @@ class MembroFamilia(models.Model):
     class Meta:
         verbose_name = "Membro da Família"
         verbose_name_plural = "Membros da Família"
+        constraints = [
+            models.UniqueConstraint(
+                fields=['familia', 'usuario'], name='familia_usuario_unico'
+            ),
+        ]
 
     def __str__(self):
         return f"{self.usuario} - {self.familia}"
