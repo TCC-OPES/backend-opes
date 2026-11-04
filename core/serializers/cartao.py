@@ -14,6 +14,8 @@ class CartaoSerializer(serializers.ModelSerializer):
         format='%d/%m/%Y'
     )
 
+    dia_fechamento = serializers.IntegerField(min_value=1, max_value=31, allow_null=True, required=False)
+
     class Meta:
         model = Cartao
         fields = '__all__'
