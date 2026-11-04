@@ -21,6 +21,14 @@ from core.views import (
     MeView,
     TransacaoView,
 )
+from core.views.familia import (
+    FamiliaConviteDetailView,
+    FamiliaConvitesEnviadosView,
+    FamiliaMembroDetailView,
+    FamiliaMembrosView,
+    FamiliasConvitesView,
+    ResponderConviteView,
+)
 
 
 urlpatterns = [
@@ -85,6 +93,36 @@ urlpatterns = [
     ),
 
     # Famílias
+    path(
+        'api/familias/convites/',
+        FamiliasConvitesView.as_view(),
+        name='familias_convites'
+    ),
+    path(
+        'api/familias/convites/<int:pk>/responder/',
+        ResponderConviteView.as_view(),
+        name='responder_convite'
+    ),
+    path(
+        'api/familias/<int:familia_id>/membros/',
+        FamiliaMembrosView.as_view(),
+        name='familia_membros'
+    ),
+    path(
+        'api/familias/<int:familia_id>/membros/<int:pk>/',
+        FamiliaMembroDetailView.as_view(),
+        name='familia_membro_detail'
+    ),
+    path(
+        'api/familias/<int:familia_id>/convites/',
+        FamiliaConvitesEnviadosView.as_view(),
+        name='familia_convites_enviados'
+    ),
+    path(
+        'api/familias/<int:familia_id>/convites/<int:pk>/',
+        FamiliaConviteDetailView.as_view(),
+        name='familia_convite_detail'
+    ),
     path(
         'api/familias/',
         FamiliaView.as_view(),
