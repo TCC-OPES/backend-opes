@@ -1,5 +1,5 @@
 from django.contrib import admin
-from core.models import User, Cartao, Familia, MembroFamilia, DespesaCompartilhada, MetaFinanceira, Transacao, Investimento
+from core.models import User, Cartao, Familia, MembroFamilia, ConviteFamilia, DespesaCompartilhada, MetaFinanceira, Transacao, Investimento
 from django.contrib.auth.hashers import make_password
 
 class UserAdmin(admin.ModelAdmin):
@@ -24,6 +24,7 @@ admin.site.register(User, UserAdmin)
 admin.site.register(Cartao)
 admin.site.register(Familia)
 admin.site.register(MembroFamilia)
+admin.site.register(ConviteFamilia)
 admin.site.register(DespesaCompartilhada)
 admin.site.register(MetaFinanceira)
 admin.site.register(Transacao)
